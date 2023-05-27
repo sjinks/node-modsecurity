@@ -53,7 +53,7 @@ describe('Transaction', () => {
         res = tx.processResponseHeaders(200, 'HTTP/1.1');
         strictEqual(res, true);
 
-        res = tx.processResponseBody(200, 'HTTP/1.1');
+        res = tx.processResponseBody();
         strictEqual(res, true);
 
         res = tx.processLogging();
@@ -69,7 +69,8 @@ describe('Transaction', () => {
 
         for (const [name, args] of table) {
             it(`should fail when ${name}`, () => {
-                throws(() => new Transaction(...args), TypeError);
+                // @ts-ignore -- intentionally passing invalid arguments
+                throws(() => new Transaction(args[0], args[1]), TypeError);
             });
         }
     });
@@ -128,6 +129,7 @@ describe('Transaction', () => {
         for (const [args, outcome] of table_2) {
             it(`should return ${outcome} when called with ${args.length} arguments`, () => {
                 const tx = new Transaction(new ModSecurity(), new Rules());
+                // @ts-ignore -- cannot make a TS cast in JS‌ mode
                 const res = tx.addRequestHeader(...args);
                 strictEqual(res, outcome);
             });
@@ -156,12 +158,14 @@ describe('Transaction', () => {
     describe('appendRequestBody', () => {
         it('should return false when called with no arguments', () => {
             const tx = new Transaction(new ModSecurity(), new Rules());
+            // @ts-ignore -- intentionally passing invalid argument
             const res = tx.appendRequestBody();
             strictEqual(res, false);
         });
 
         it('should throw when its argument is not a String or Buffer', () => {
             const tx = new Transaction(new ModSecurity(), new Rules());
+            // @ts-ignore -- intentionally passing invalid argument
             throws(() => tx.appendRequestBody({}), TypeError);
         });
 
@@ -206,6 +210,7 @@ describe('Transaction', () => {
     describe('requestBodyFromFile', () => {
         it('should return false when called with no arguments', () => {
             const tx = new Transaction(new ModSecurity(), new Rules());
+            // @ts-ignore -- intentionally passing invalid argument
             const res = tx.requestBodyFromFile();
             strictEqual(res, false);
         });
@@ -282,6 +287,7 @@ describe('Transaction', () => {
         for (const [args, outcome] of table_2) {
             it(`should return ${outcome} when called with ${args.length} arguments`, () => {
                 const tx = new Transaction(new ModSecurity(), new Rules());
+                // @ts-ignore -- cannot make a TS cast in JS‌ mode
                 const res = tx.addResponseHeader(...args);
                 strictEqual(res, outcome);
             });
@@ -291,7 +297,7 @@ describe('Transaction', () => {
     describe('processResponseHeaders', () => {
         it('should return true if everything is OK', () => {
             const tx = new Transaction(new ModSecurity(), new Rules());
-            const res = tx.processRequestHeaders(200, 'HTTP/1.1');
+            const res = tx.processResponseHeaders(200, 'HTTP/1.1');
             strictEqual(res, true);
         });
 

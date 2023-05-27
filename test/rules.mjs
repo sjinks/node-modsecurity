@@ -103,6 +103,7 @@ describe('Rules', () => {
 
         it('should fail if the argument is not Rules instance', () => {
             const rules = new Rules();
+            // @ts-ignore -- intentionally passing invalid argument
             throws(() => rules.merge({}), TypeError);
         });
     });

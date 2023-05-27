@@ -1,4 +1,4 @@
 /.vscode/
+/build/
 /compile_commands.json
-/coverage.sh
 /node_modules/

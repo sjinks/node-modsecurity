@@ -71,7 +71,7 @@ Transaction::Transaction(const Napi::CallbackInfo& info)
     }
 
     if (!rs.InstanceOf(Rules::ctor->Value())) {
-        throw Napi::TypeError::New(env, "Transaction::constructor() expects the second argument to be an instance of ModSecurityRules");
+        throw Napi::TypeError::New(env, "Transaction::constructor() expects the second argument to be an instance of Rules");
     }
 
     ModSecurity* modsec = Napi::ObjectWrap<ModSecurity>::Unwrap(ms);

@@ -6,17 +6,29 @@
   "module": "index.mjs",
   "exports": {
     ".": {
-      "require": "./index.cjs",
-      "import": "./index.mjs"
+      "require": {
+        "default": "./index.cjs",
+        "types": "./index.d.cts"
+      },
+      "import": {
+        "default": "./index.mjs",
+        "types": "./index.d.mts"
+      }
     }
   },
+  "types": "index.d.cts",
   "scripts": {
     "build": "node-gyp rebuild",
     "build:dev": "node-gyp build --debug",
     "build:coverage": "CXXFLAGS='-Og --coverage -fprofile-abs-path' LDFLAGS='--coverage' npm run build",
     "test": "node --expose-gc --test"
   },
-  "keywords": ["modsecurity", "security", "waf", "firewall"],
+  "keywords": [
+    "modsecurity",
+    "security",
+    "waf",
+    "firewall"
+  ],
   "author": "Volodymyr Kolesnykov <volodymyr@wildwolf.name> (https://wildwolf.name/)",
   "license": "MIT",
   "dependencies": {

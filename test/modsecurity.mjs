@@ -21,7 +21,7 @@ describe('ModSecurity', () => {
             strictEqual(res, true);
             res = tx.processRequestHeaders();
             strictEqual(res, true);
-            // @ts-ignore
+            // @ts-ignore -- false positive; `match` accepts anything
             match(actualMessage, /Blocked IP/);
         });
 
@@ -46,7 +46,7 @@ describe('ModSecurity', () => {
             strictEqual(res, true);
             res = tx.processRequestHeaders();
             strictEqual(res, true);
-            // @ts-ignore
+            // @ts-ignore -- false positive; `match` accepts anything@ts-ignore
             match(actualMessage, /Blocked IP/);
         });
     })
