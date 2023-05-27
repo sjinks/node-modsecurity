@@ -1,0 +1,34 @@
+{
+  "name": "modsecurity",
+  "version": "0.0.1",
+  "description": "ModSecurity connector for Node.js",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "require": "./index.cjs",
+      "import": "./index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "build:dev": "node-gyp build --debug",
+    "build:coverage": "CXXFLAGS='-Og --coverage -fprofile-abs-path' LDFLAGS='--coverage' npm run build",
+    "test": "node --expose-gc --test"
+  },
+  "keywords": ["modsecurity", "security", "waf", "firewall"],
+  "author": "Volodymyr Kolesnykov <volodymyr@wildwolf.name> (https://wildwolf.name/)",
+  "license": "MIT",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^6.1.0"
+  },
+  "binary": {
+    "napi_versions": [
+      6
+    ]
+  },
+  "engines": {
+    "node": "^10.20.0 || ^12.17.0 || >=14.0.0"
+  }
+}
