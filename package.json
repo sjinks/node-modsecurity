@@ -42,5 +42,21 @@
   },
   "engines": {
     "node": "^10.20.0 || ^12.17.0 || >=14.0.0"
-  }
+  },
+  "files": [
+    "binding.gyp",
+    "engine.cpp",
+    "engine.h",
+    "index.cjs",
+    "index.d.cts",
+    "index.d.mts",
+    "index.mjs",
+    "intervention.cpp",
+    "intervention.h",
+    "main.cpp",
+    "rules.cpp",
+    "rules.h",
+    "transaction.cpp",
+    "transaction.h"
+  ]
 }
