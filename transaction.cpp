@@ -16,17 +16,7 @@
     using string_view = std::string;
 #endif
 
-static bool has_intervention(const std::unique_ptr<modsecurity::Transaction>& tx, modsecurity::ModSecurityIntervention& it)
-{
-    modsecurity::intervention::clean(&it);
-    if (tx->intervention(&it)) {
-        return true;
-    }
-
-    return false;
-}
-
-static Napi::Object make_intervention(Napi::Env env, modsecurity::ModSecurityIntervention& it)
+Napi::Object Transaction::createIntervention(Napi::Env env, modsecurity::ModSecurityIntervention& it)
 {
     auto result = Intervention::ctor->New({
         Napi::Number::New(env, it.status),
@@ -91,6 +81,11 @@ Transaction::Transaction(const Napi::CallbackInfo& info)
     this->m_transaction.reset(new modsecurity::Transaction(&modsec->m_modsec, &rules->m_rules, &this->m_modsec));
 }
 
+bool Transaction::hasIntervention(modsecurity::ModSecurityIntervention_t& it) const {
+    modsecurity::intervention::clean(&it);
+    return this->m_transaction->intervention(&it);
+}
+
 Napi::Value Transaction::processConnection(const Napi::CallbackInfo& info)
 {
     auto env        = info.Env();
@@ -101,8 +96,8 @@ Napi::Value Transaction::processConnection(const Napi::CallbackInfo& info)
 
     if (true == this->m_transaction->processConnection(clientIP.Utf8Value().c_str(), clientPort.Int32Value(), serverIP.Utf8Value().c_str(), serverPort.Int32Value())) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);
@@ -119,8 +114,8 @@ Napi::Value Transaction::processURI(const Napi::CallbackInfo& info)
     auto protoVer = info[2].ToString();
     if (true == this->m_transaction->processURI(uri.Utf8Value().c_str(), method.Utf8Value().c_str(), protoVer.Utf8Value().c_str())) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);
@@ -173,8 +168,8 @@ Napi::Value Transaction::processRequestHeaders(const Napi::CallbackInfo& info)
 
     if (true == this->m_transaction->processRequestHeaders()) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);
@@ -202,8 +197,8 @@ Napi::Value Transaction::appendRequestBody(const Napi::CallbackInfo& info)
 
         if (true == res) {
             modsecurity::ModSecurityIntervention it;
-            if (has_intervention(this->m_transaction, it)) {
-                return make_intervention(env, it);
+            if (this->hasIntervention(it)) {
+                return Transaction::createIntervention(env, it);
             }
 
             return Napi::Boolean::New(env, true);
@@ -221,8 +216,8 @@ Napi::Value Transaction::requestBodyFromFile(const Napi::CallbackInfo& info)
         Napi::String path = info[0].ToString();
         if (true == this->m_transaction->requestBodyFromFile(path.Utf8Value().c_str())) {
             modsecurity::ModSecurityIntervention it;
-            if (has_intervention(this->m_transaction, it)) {
-                return make_intervention(env, it);
+            if (this->hasIntervention(it)) {
+                return Transaction::createIntervention(env, it);
             }
 
             return Napi::Boolean::New(env, true);
@@ -238,8 +233,8 @@ Napi::Value Transaction::processRequestBody(const Napi::CallbackInfo& info)
 
     if (true == this->m_transaction->processRequestBody()) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);
@@ -294,8 +289,8 @@ Napi::Value Transaction::processResponseHeaders(const Napi::CallbackInfo& info)
 
     if (true == this->m_transaction->processResponseHeaders(code.Int32Value(), protoVer.Utf8Value().c_str())) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);
@@ -328,8 +323,8 @@ Napi::Value Transaction::appendResponseBody(const Napi::CallbackInfo& info)
 
     if (true == res) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);
@@ -344,8 +339,8 @@ Napi::Value Transaction::processResponseBody(const Napi::CallbackInfo& info)
 
     if (true == this->m_transaction->processResponseBody()) {
         modsecurity::ModSecurityIntervention it;
-        if (has_intervention(this->m_transaction, it)) {
-            return make_intervention(env, it);
+        if (this->hasIntervention(it)) {
+            return Transaction::createIntervention(env, it);
         }
 
         return Napi::Boolean::New(env, true);

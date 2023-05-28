@@ -6,6 +6,7 @@
 
 namespace modsecurity {
     class Transaction;
+    struct ModSecurityIntervention_t;
 }
 
 class Transaction : public Napi::ObjectWrap<Transaction> {
@@ -33,6 +34,9 @@ private:
     Napi::Value appendResponseBody(const Napi::CallbackInfo& info);
     Napi::Value processResponseBody(const Napi::CallbackInfo& info);
     Napi::Value processLogging(const Napi::CallbackInfo& info);
+
+    bool hasIntervention(modsecurity::ModSecurityIntervention_t& it) const;
+    static Napi::Object createIntervention(Napi::Env env, modsecurity::ModSecurityIntervention_t& it);
 };
 
 #endif /* AFE1A35A_A06D_4DEC_9F1A_C1A0EEF92CC9 */
