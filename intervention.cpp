@@ -9,15 +9,17 @@ void Intervention::Init(Napi::Env env)
 {
     auto func = DefineClass(env, "Intervention", {});
 
-    Intervention::ctor = new Napi::FunctionReference();
-    *Intervention::ctor = Napi::Persistent(func);
+    auto ref = std::make_unique<Napi::FunctionReference>();
+    *ref     = Napi::Persistent(func);
+
+    Intervention::ctor = ref.release();
     env.SetInstanceData<Napi::FunctionReference>(Intervention::ctor);
 }
 
 Intervention::Intervention(const Napi::CallbackInfo& info)
     : Napi::ObjectWrap<Intervention>(info)
 {
-    Napi::Object self = info.This().As<Napi::Object>();
+    auto self = info.This().As<Napi::Object>();
     self.DefineProperties({
         Napi::PropertyDescriptor::Value("status", info[0], napi_enumerable),
         Napi::PropertyDescriptor::Value("url", info[1], napi_enumerable),

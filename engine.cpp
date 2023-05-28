@@ -1,3 +1,4 @@
+#include <memory>
 #include <modsecurity/modsecurity.h>
 #include <modsecurity/rule_message.h>
 #include "engine.h"
@@ -24,8 +25,10 @@ Napi::Object ModSecurity::Init(Napi::Env env, Napi::Object exports)
         InstanceMethod<&ModSecurity::whoAmI>("whoAmI", napi_default)
     });
 
-    ModSecurity::ctor = new Napi::FunctionReference();
-    *ModSecurity::ctor = Napi::Persistent(func);
+    auto ref = std::make_unique<Napi::FunctionReference>();
+    *ref     = Napi::Persistent(func);
+
+    ModSecurity::ctor = ref.release();
     env.SetInstanceData<Napi::FunctionReference>(ModSecurity::ctor);
 
     exports.Set("ModSecurity", func);

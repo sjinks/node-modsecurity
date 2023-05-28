@@ -1,4 +1,4 @@
-#include <numeric>
+#include <memory>
 #include <modsecurity/rules_set.h>
 #include "rules.h"
 
@@ -14,8 +14,10 @@ Napi::Object Rules::Init(Napi::Env env, Napi::Object exports)
         InstanceAccessor<&Rules::length>("length", napi_default)
     });
 
-    Rules::ctor = new Napi::FunctionReference();
-    *Rules::ctor = Napi::Persistent(func);
+    auto ref = std::make_unique<Napi::FunctionReference>();
+    *ref     = Napi::Persistent(func);
+
+    Rules::ctor = ref.release();
     env.SetInstanceData<Napi::FunctionReference>(Rules::ctor);
 
     exports.Set("Rules", func);
