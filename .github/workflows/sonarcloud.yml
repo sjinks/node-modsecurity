@@ -47,11 +47,21 @@ jobs:
         run: |
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} npm run build
         env:
-          CXXFLAGS: -std=c++14
+          CXXFLAGS: -Og --coverage -fprofile-abs-path -std=c++14
+          LDFLAGS: --coverage
+
+      - name: Run tests
+        run: npm test
+
+      - name: Process coverage report
+        run: |
+          mkdir coverage
+          cd coverage
+          find .. -name '*.o' | xargs gcov --preserve-paths
 
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" --define sonar.cfamily.gcov.reportsPath=coverage
