@@ -5,6 +5,7 @@ type Stringable = string | {
 export declare class ModSecurity {
     constructor();
     setLogCallback(callback: (message: string) => void): void;
+    whoAmI(): string;
 }
 export declare class Rules {
     constructor();

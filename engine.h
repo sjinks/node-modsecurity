@@ -1,12 +1,8 @@
 #ifndef C5AADECE_76C1_4942_AADD_19237F6A9784
 #define C5AADECE_76C1_4942_AADD_19237F6A9784
 
-#include <memory>
 #include <napi.h>
-
-namespace modsecurity {
-    class ModSecurity;
-}
+#include <modsecurity/modsecurity.h>
 
 class ModSecurity : public Napi::ObjectWrap<ModSecurity> {
 public:
@@ -16,12 +12,14 @@ public:
 
     virtual void Finalize(Napi::Env env) override;
 
-    operator modsecurity::ModSecurity*() const;
 private:
-    std::unique_ptr<modsecurity::ModSecurity> m_modsec;
+    friend class Transaction;
+
+    modsecurity::ModSecurity m_modsec;
     Napi::FunctionReference m_logger;
 
     Napi::Value setLogCallback(const Napi::CallbackInfo& info);
+    Napi::Value whoAmI(const Napi::CallbackInfo& info);
 
     static void log_callback(void* data, const void* message);
 };

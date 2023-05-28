@@ -80,7 +80,7 @@ Transaction::Transaction(const Napi::CallbackInfo& info)
     this->m_modsec = Napi::Persistent(ms);
     this->m_rules  = Napi::Persistent(rs);
 
-    this->m_transaction.reset(new modsecurity::Transaction(*modsec, *rules, &this->m_modsec));
+    this->m_transaction.reset(new modsecurity::Transaction(&modsec->m_modsec, &rules->m_rules, &this->m_modsec));
 }
 
 Napi::Value Transaction::processConnection(const Napi::CallbackInfo& info)

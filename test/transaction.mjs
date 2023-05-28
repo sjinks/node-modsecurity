@@ -31,6 +31,30 @@ function checkIntervention(intervention, status, url, log, disruptive) {
     strictEqual(intervention.disruptive, disruptive);
 }
 
+/**
+ * @param {Transaction} tx
+ * @returns {void}
+ * @see https://github.com/SpiderLabs/ModSecurity/issues/2872
+ * @see https://github.com/SpiderLabs/ModSecurity/issues/2886
+ */
+function runInitialChecks(tx) {
+    // libmodsecurity 3.0.6-3.0.8 are buggy. It segfaults if you don't call processConnection()
+    // because it will try to access uninitialized m_clientIpAddress variable
+    // modsecurity::RuleMessage::log[abi:cxx11](modsecurity::RuleMessage const*, int, int) (rule_message.cc:71)
+    let res = tx.processConnection('127.0.0.1', 12345, '127.0.0.1', 80);
+    strictEqual(res, true);
+
+    // With libmodsecurity 3.0.6-3.0.8, you always have to call processURI() or else you will get a segfault somewhere after
+    // modsecurity::utils::string::limitTo(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (string.cc:100)
+    // modsecurity::RuleMessage::_details[abi:cxx11](modsecurity::RuleMessage const*) (rule_message.cc:47)
+    // modsecurity::RuleMessage::log[abi:cxx11](modsecurity::RuleMessage const*, int, int) (rule_message.cc:88)
+    // because the `m_uriNoQueryStringDecoded` variable is not set
+    res = tx.processURI('/', 'GET', '1.1');
+    strictEqual(res, true);
+
+    // All these steps are not required with libmodsecurity 3.0.9
+}
+
 describe('Transaction', () => {
     it('should work', () => {
         const modsec = new ModSecurity();
@@ -88,7 +112,14 @@ describe('Transaction', () => {
             rules.add(`SecRule REMOTE_ADDR "@ipMatch 127.0.0.1" "phase:0,id:1000,nolog,deny,msg:'Blocked IP'"`);
 
             const tx = new Transaction(new ModSecurity(), rules);
-            const res = tx.processConnection('127.0.0.1', 12345, '127.0.0.1', 80);
+            // See runInitialChecks() why we do this.
+            // We swap calls to processConnection() and processURI() because we want to see an intervention
+            // created by processConnection().
+            // Normally, processURI() is called after processConnection().
+            let res = tx.processURI('/', 'GET', 'HTTP/1.1');
+            strictEqual(res, true);
+
+            res = tx.processConnection('127.0.0.1', 12345, '127.0.0.1', 80);
             checkIntervention(res, 403, null, /msg "Blocked IP"/, true);
         });
     });
@@ -149,6 +180,7 @@ describe('Transaction', () => {
             rules.add(`SecRule &REQUEST_HEADERS:Authorization "@gt 0" "id:1001,phase:1,deny,status:400,msg:'Authorization header not allowed'"`);
 
             const tx = new Transaction(new ModSecurity(), rules);
+            runInitialChecks(tx);
             tx.addRequestHeader('Authorization', 'broken');
             const res = tx.processRequestHeaders();
             checkIntervention(res, 400, null, /msg "Authorization header not allowed"/, true);
@@ -252,6 +284,7 @@ describe('Transaction', () => {
             rules.add(`SecRule REQUEST_BODY "lunchrast" "phase:2,id:75,deny,status:403,msg:'Argh!'"`)
 
             const tx = new Transaction(new ModSecurity(), rules);
+            runInitialChecks(tx);
             let res = tx.requestBodyFromFile(join(__dirname, 'fixtures', 'request-body.txt'));
             strictEqual(res, true);
             res = tx.processRequestBody();
@@ -307,6 +340,7 @@ describe('Transaction', () => {
             rules.add(`SecRule &RESPONSE_HEADERS:Secret "@gt 0" "id:1001,phase:3,redirect:http://www.example.com/,msg:'Secret header leaked'"`);
 
             const tx = new Transaction(new ModSecurity(), rules);
+            runInitialChecks(tx);
             tx.addResponseHeader('Secret', 'pa$$w0rd');
             const res = tx.processResponseHeaders(200, 'HTTP/1.1');
             checkIntervention(res, 302, 'http://www.example.com/', /msg "Secret header leaked"/, true);
@@ -321,6 +355,7 @@ describe('Transaction', () => {
             rules.add(`SecRule RESPONSE_STATUS "204" "id:80,phase:4,deny,msg:'Grrr'"`);
 
             const tx = new Transaction(new ModSecurity(), rules);
+            runInitialChecks(tx);
             let res = tx.processResponseHeaders(200, 'HTTP/1.1');
             strictEqual(res, true);
             res = tx.updateStatusCode(204);
@@ -346,6 +381,7 @@ describe('Transaction', () => {
             rules.add(`SecRule RESPONSE_BODY "lunchrast" "phase:4,id:75,deny,status:500,msg:'Argh!'"`)
 
             const tx = new Transaction(new ModSecurity(), rules);
+            runInitialChecks(tx);
             let res = tx.appendResponseBody('För livet är ingen lunchrast, livet är inte lätt');
             strictEqual(res, true);
             res = tx.processResponseBody();

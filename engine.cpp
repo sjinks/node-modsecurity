@@ -20,7 +20,8 @@ void ModSecurity::log_callback(void* data, const void* message)
 Napi::Object ModSecurity::Init(Napi::Env env, Napi::Object exports)
 {
     Napi::Function func = DefineClass(env, "ModSecurity", {
-        InstanceMethod<&ModSecurity::setLogCallback>("setLogCallback", napi_default)
+        InstanceMethod<&ModSecurity::setLogCallback>("setLogCallback", napi_default),
+        InstanceMethod<&ModSecurity::whoAmI>("whoAmI", napi_default)
     });
 
     ModSecurity::ctor = new Napi::FunctionReference();
@@ -39,15 +40,10 @@ void ModSecurity::Finalize(Napi::Env env)
 }
 
 ModSecurity::ModSecurity(const Napi::CallbackInfo& info)
-    : Napi::ObjectWrap<ModSecurity>(info), m_modsec(new modsecurity::ModSecurity()), m_logger()
+    : Napi::ObjectWrap<ModSecurity>(info), m_modsec(), m_logger()
 {
-    this->m_modsec->setConnectorInformation("ModSecurity/nodejs");
-    this->m_modsec->setServerLogCb(&ModSecurity::log_callback, modsecurity::TextLogProperty);
-}
-
-ModSecurity::operator modsecurity::ModSecurity*() const
-{
-    return this->m_modsec.get();
+    this->m_modsec.setConnectorInformation("ModSecurity/nodejs");
+    this->m_modsec.setServerLogCb(&ModSecurity::log_callback, modsecurity::TextLogProperty);
 }
 
 Napi::Value ModSecurity::setLogCallback(const Napi::CallbackInfo& info)
@@ -59,4 +55,9 @@ Napi::Value ModSecurity::setLogCallback(const Napi::CallbackInfo& info)
 
     this->m_logger = Napi::Persistent(cb);
     return info.Env().Undefined();
+}
+
+Napi::Value ModSecurity::whoAmI(const Napi::CallbackInfo& info)
+{
+    return Napi::String::New(info.Env(), this->m_modsec.whoAmI());
 }

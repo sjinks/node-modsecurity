@@ -1,12 +1,8 @@
 #ifndef FC720BA6_AE93_4142_917C_3BC02BEFD1C7
 #define FC720BA6_AE93_4142_917C_3BC02BEFD1C7
 
-#include <memory>
 #include <napi.h>
-
-namespace modsecurity {
-    class RulesSet;
-}
+#include <modsecurity/rules_set.h>
 
 class Rules : public Napi::ObjectWrap<Rules> {
 public:
@@ -14,9 +10,9 @@ public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
     Rules(const Napi::CallbackInfo& info);
 
-    operator modsecurity::RulesSet*() const;
 private:
-    std::unique_ptr<modsecurity::RulesSet> m_rules;
+    friend class Transaction;
+    modsecurity::RulesSet m_rules;
 
     Napi::Value loadFromFile(const Napi::CallbackInfo& info);
     Napi::Value add(const Napi::CallbackInfo& info);
