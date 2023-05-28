@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import { strictEqual, throws } from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { Rules } from '../index.mjs';
+import { Rules } from '../../index.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -17,19 +17,19 @@ describe('Rules', () => {
     describe('loadFromFile', () => {
         it('should load rules from a file', () => {
             const rules = new Rules();
-            const result = rules.loadFromFile(join(__dirname, 'fixtures', 'valid-rules.conf'));
+            const result = rules.loadFromFile(join(__dirname, '..', 'fixtures', 'valid-rules.conf'));
             strictEqual(result, true);
             strictEqual(rules.length, 1);
         });
 
         it('should fail on invalid rules', () => {
             const rules = new Rules();
-            throws(() => rules.loadFromFile(join(__dirname, 'fixtures', 'invalid-rules.conf')), /Invalid input/);
+            throws(() => rules.loadFromFile(join(__dirname, '..', 'fixtures', 'invalid-rules.conf')), /Invalid input/);
         });
 
         it('should fail on non-existing file', () => {
             const rules = new Rules();
-            throws(() => rules.loadFromFile(join(__dirname, 'fixtures', 'this-file-does-not-exist')), /Failed to open/);
+            throws(() => rules.loadFromFile(join(__dirname, '..', 'fixtures', 'this-file-does-not-exist')), /Failed to open/);
         });
     });
 
@@ -85,9 +85,10 @@ describe('Rules', () => {
         it('should fail on duplicate rules', () => {
             const lhs = new Rules();
             const rhs = new Rules();
+            const rule = `SecRule REMOTE_ADDR "@ipMatch 192.168.1.1" "phase:1,id:1000,deny,msg:'Blocked IP'"`;
 
-            lhs.add(`SecRule REMOTE_ADDR "@ipMatch 192.168.1.1" "phase:1,id:1000,deny,msg:'Blocked IP'"`);
-            rhs.add(`SecRule REMOTE_ADDR "@ipMatch 192.168.1.1" "phase:1,id:1000,deny,msg:'Blocked IP'"`);
+            lhs.add(rule);
+            rhs.add(rule);
 
             throws(() => lhs.merge(rhs), /duplicated/);
         });

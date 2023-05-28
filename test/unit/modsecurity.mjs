@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import { match, strictEqual } from 'node:assert/strict';
-import { ModSecurity, Rules, Transaction } from '../index.mjs';
+import { ModSecurity, Rules, Transaction } from '../../index.mjs';
 
 describe('ModSecurity', () => {
     describe('setLogCallback', () => {

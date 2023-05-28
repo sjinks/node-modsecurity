@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import { match, strictEqual, throws } from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { ModSecurity, Rules, Transaction } from '../index.mjs';
+import { ModSecurity, Rules, Transaction } from '../../index.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -249,13 +249,13 @@ describe('Transaction', () => {
 
         it('should return false when the file does not exist', () => {
             const tx = new Transaction(new ModSecurity(), new Rules());
-            const res = tx.requestBodyFromFile(join(__dirname, 'fixtures', 'this-file-does-not-exist'));
+            const res = tx.requestBodyFromFile(join(__dirname, '..', 'fixtures', 'this-file-does-not-exist'));
             strictEqual(res, false);
         });
 
         it('should return true when everything is OK', () => {
             const tx = new Transaction(new ModSecurity(), new Rules());
-            const res = tx.requestBodyFromFile(join(__dirname, 'fixtures', 'request-body.txt'));
+            const res = tx.requestBodyFromFile(join(__dirname, '..', 'fixtures', 'request-body.txt'));
             strictEqual(res, true);
         });
 
@@ -266,7 +266,7 @@ describe('Transaction', () => {
             rules.add('SecRequestBodyLimitAction Reject')
 
             const tx = new Transaction(new ModSecurity(), rules);
-            const res = tx.requestBodyFromFile(join(__dirname, 'fixtures', 'request-body.txt'));
+            const res = tx.requestBodyFromFile(join(__dirname, '..', 'fixtures', 'request-body.txt'));
             checkIntervention(res, 403, null, /Request body limit/, true);
         });
     });
@@ -285,7 +285,7 @@ describe('Transaction', () => {
 
             const tx = new Transaction(new ModSecurity(), rules);
             runInitialChecks(tx);
-            let res = tx.requestBodyFromFile(join(__dirname, 'fixtures', 'request-body.txt'));
+            let res = tx.requestBodyFromFile(join(__dirname, '..', 'fixtures', 'request-body.txt'));
             strictEqual(res, true);
             res = tx.processRequestBody();
             checkIntervention(res, 403, null, /Argh!/, true);

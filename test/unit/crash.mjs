@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import { setTimeout } from 'node:timers/promises';
-import { ModSecurity, Rules, Transaction } from '../index.mjs';
+import { ModSecurity, Rules, Transaction } from '../../index.mjs';
 
 /**
  * @returns {Transaction}

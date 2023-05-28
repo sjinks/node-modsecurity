@@ -58,5 +58,9 @@
     "src/rules.h",
     "src/transaction.cpp",
     "src/transaction.h"
-  ]
+  ],
+  "devDependencies": {
+    "express": "^4.18.2",
+    "supertest": "^6.3.3"
+  }
 }
