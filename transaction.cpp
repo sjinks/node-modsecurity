@@ -1,12 +1,20 @@
 #include <cstddef>
 #include <cstdlib>
-#include <string_view>
+#if __cplusplus >= 201703L
+#   include <string_view>
+#endif
 #include <modsecurity/intervention.h>
 #include <modsecurity/transaction.h>
 #include "transaction.h"
 #include "engine.h"
 #include "rules.h"
 #include "intervention.h"
+
+#if __cplusplus >= 201703L
+    using std::string_view;
+#else
+    using string_view = std::string;
+#endif
 
 static bool has_intervention(const std::unique_ptr<modsecurity::Transaction>& tx, modsecurity::ModSecurityIntervention& it)
 {
@@ -128,23 +136,23 @@ Napi::Value Transaction::addRequestHeader(const Napi::CallbackInfo& info)
     if (info.Length() >= 2) {
         std::string n;
         std::string v;
-        std::string_view name;
-        std::string_view value;
+        string_view name;
+        string_view value;
 
         if (info[0].IsBuffer()) {
             auto buf = info[0].As<Napi::Buffer<char>>();
-            name     = std::string_view(buf.Data(), buf.Length());
+            name     = string_view(buf.Data(), buf.Length());
         } else {
             n    = info[0].ToString().Utf8Value();
-            name = std::string_view(n);
+            name = string_view(n);
         }
 
         if (info[1].IsBuffer()) {
             auto buf = info[1].As<Napi::Buffer<char>>();
-            value    = std::string_view(buf.Data(), buf.Length());
+            value    = string_view(buf.Data(), buf.Length());
         } else {
             v     = info[0].ToString().Utf8Value();
-            value = std::string_view(v);
+            value = string_view(v);
         }
 
         return Napi::Boolean::New(
@@ -247,23 +255,23 @@ Napi::Value Transaction::addResponseHeader(const Napi::CallbackInfo& info)
     if (info.Length() >= 2) {
         std::string n;
         std::string v;
-        std::string_view name;
-        std::string_view value;
+        string_view name;
+        string_view value;
 
         if (info[0].IsBuffer()) {
             auto buf = info[0].As<Napi::Buffer<char>>();
-            name     = std::string_view(buf.Data(), buf.Length());
+            name     = string_view(buf.Data(), buf.Length());
         } else {
             n    = info[0].ToString().Utf8Value();
-            name = std::string_view(n);
+            name = string_view(n);
         }
 
         if (info[1].IsBuffer()) {
             auto buf = info[1].As<Napi::Buffer<char>>();
-            value    = std::string_view(buf.Data(), buf.Length());
+            value    = string_view(buf.Data(), buf.Length());
         } else {
             v     = info[0].ToString().Utf8Value();
-            value = std::string_view(v);
+            value = string_view(v);
         }
 
         return Napi::Boolean::New(
