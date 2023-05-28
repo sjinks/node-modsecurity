@@ -6,9 +6,9 @@ Napi::FunctionReference* ModSecurity::ctor = nullptr;
 
 void ModSecurity::log_callback(void* data, const void* message)
 {
-    Napi::ObjectReference* ref = reinterpret_cast<Napi::ObjectReference*>(data);
-    Napi::Object ms            = ref->Value();
-    ModSecurity* modsec        = Napi::ObjectWrap<ModSecurity>::Unwrap(ms);
+    auto ref    = reinterpret_cast<Napi::ObjectReference*>(data);
+    auto ms     = ref->Value();
+    auto modsec = Napi::ObjectWrap<ModSecurity>::Unwrap(ms);
 
     if (!modsec->m_logger.IsEmpty()) {
         const char* msg = reinterpret_cast<const char*>(message);
