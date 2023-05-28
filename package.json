@@ -45,18 +45,18 @@
   },
   "files": [
     "binding.gyp",
-    "engine.cpp",
-    "engine.h",
     "index.cjs",
     "index.d.cts",
     "index.d.mts",
     "index.mjs",
-    "intervention.cpp",
-    "intervention.h",
-    "main.cpp",
-    "rules.cpp",
-    "rules.h",
-    "transaction.cpp",
-    "transaction.h"
+    "src/engine.cpp",
+    "src/engine.h",
+    "src/intervention.cpp",
+    "src/intervention.h",
+    "src/main.cpp",
+    "src/rules.cpp",
+    "src/rules.h",
+    "src/transaction.cpp",
+    "src/transaction.h"
   ]
 }

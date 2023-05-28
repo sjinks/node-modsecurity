@@ -3,11 +3,11 @@
     {
       "target_name": "modsecurity",
       "sources": [
-        "main.cpp",
-        "intervention.cpp",
-        "engine.cpp",
-        "rules.cpp",
-        "transaction.cpp"
+        "src/main.cpp",
+        "src/intervention.cpp",
+        "src/engine.cpp",
+        "src/rules.cpp",
+        "src/transaction.cpp"
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions', '-fno-rtti' ],
