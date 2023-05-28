@@ -8,9 +8,9 @@ class ModSecurity : public Napi::ObjectWrap<ModSecurity> {
 public:
     static Napi::FunctionReference* ctor;
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    ModSecurity(const Napi::CallbackInfo& info);
+    explicit ModSecurity(const Napi::CallbackInfo& info);
 
-    virtual void Finalize(Napi::Env env) override;
+    void Finalize(Napi::Env env) override;
 
 private:
     friend class Transaction;

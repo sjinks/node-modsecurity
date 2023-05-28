@@ -11,9 +11,9 @@ namespace modsecurity {
 class Transaction : public Napi::ObjectWrap<Transaction> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    Transaction(const Napi::CallbackInfo& info);
+    explicit Transaction(const Napi::CallbackInfo& info);
 
-    virtual void Finalize(Napi::Env env) override;
+    void Finalize(Napi::Env env) override;
 
 private:
     std::unique_ptr<modsecurity::Transaction> m_transaction;

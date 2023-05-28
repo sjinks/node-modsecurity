@@ -6,20 +6,20 @@ Napi::FunctionReference* ModSecurity::ctor = nullptr;
 
 void ModSecurity::log_callback(void* data, const void* message)
 {
-    auto ref    = reinterpret_cast<Napi::ObjectReference*>(data);
+    auto ref    = static_cast<Napi::ObjectReference*>(data);
     auto ms     = ref->Value();
     auto modsec = Napi::ObjectWrap<ModSecurity>::Unwrap(ms);
 
     if (!modsec->m_logger.IsEmpty()) {
-        const char* msg = reinterpret_cast<const char*>(message);
-        Napi::Env env   = ms.Env();
+        auto msg = static_cast<const char*>(message);
+        auto env = ms.Env();
         modsec->m_logger.Call(ms, { Napi::String::New(env, msg) });
     }
 }
 
 Napi::Object ModSecurity::Init(Napi::Env env, Napi::Object exports)
 {
-    Napi::Function func = DefineClass(env, "ModSecurity", {
+    auto func = DefineClass(env, "ModSecurity", {
         InstanceMethod<&ModSecurity::setLogCallback>("setLogCallback", napi_default),
         InstanceMethod<&ModSecurity::whoAmI>("whoAmI", napi_default)
     });
@@ -40,7 +40,7 @@ void ModSecurity::Finalize(Napi::Env env)
 }
 
 ModSecurity::ModSecurity(const Napi::CallbackInfo& info)
-    : Napi::ObjectWrap<ModSecurity>(info), m_modsec(), m_logger()
+    : Napi::ObjectWrap<ModSecurity>(info)
 {
     this->m_modsec.setConnectorInformation("ModSecurity/nodejs");
     this->m_modsec.setServerLogCb(&ModSecurity::log_callback, modsecurity::TextLogProperty);
@@ -48,7 +48,7 @@ ModSecurity::ModSecurity(const Napi::CallbackInfo& info)
 
 Napi::Value ModSecurity::setLogCallback(const Napi::CallbackInfo& info)
 {
-    Napi::Function cb = info[0].As<Napi::Function>();
+    auto cb = info[0].As<Napi::Function>();
     if (!this->m_logger.IsEmpty()) {
         this->m_logger.Unref();
     }

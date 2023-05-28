@@ -8,7 +8,7 @@ class Rules : public Napi::ObjectWrap<Rules> {
 public:
     static Napi::FunctionReference* ctor;
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    Rules(const Napi::CallbackInfo& info);
+    explicit Rules(const Napi::CallbackInfo& info);
 
 private:
     friend class Transaction;

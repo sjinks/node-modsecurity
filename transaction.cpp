@@ -68,11 +68,11 @@ void Transaction::Finalize(Napi::Env env)
 }
 
 Transaction::Transaction(const Napi::CallbackInfo& info)
-    : Napi::ObjectWrap<Transaction>(info), m_transaction(nullptr), m_modsec(), m_rules()
+    : Napi::ObjectWrap<Transaction>(info)
 {
     auto env = info.Env();
-    Napi::Object ms = info[0].As<Napi::Object>();
-    Napi::Object rs = info[1].As<Napi::Object>();
+    auto ms  = info[0].As<Napi::Object>();
+    auto rs  = info[1].As<Napi::Object>();
 
     if (!ms.InstanceOf(ModSecurity::ctor->Value())) {
         throw Napi::TypeError::New(env, "Transaction::constructor() expects the first argument to be an instance of ModSecurity");
@@ -82,8 +82,8 @@ Transaction::Transaction(const Napi::CallbackInfo& info)
         throw Napi::TypeError::New(env, "Transaction::constructor() expects the second argument to be an instance of Rules");
     }
 
-    ModSecurity* modsec = Napi::ObjectWrap<ModSecurity>::Unwrap(ms);
-    Rules* rules        = Napi::ObjectWrap<Rules>::Unwrap(rs);
+    auto modsec = Napi::ObjectWrap<ModSecurity>::Unwrap(ms);
+    auto rules  = Napi::ObjectWrap<Rules>::Unwrap(rs);
 
     this->m_modsec = Napi::Persistent(ms);
     this->m_rules  = Napi::Persistent(rs);
@@ -93,11 +93,11 @@ Transaction::Transaction(const Napi::CallbackInfo& info)
 
 Napi::Value Transaction::processConnection(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::String clientIP   = info[0].ToString();
-    Napi::Number clientPort = info[1].ToNumber();
-    Napi::String serverIP   = info[2].ToString();
-    Napi::Number serverPort = info[3].ToNumber();
+    auto env        = info.Env();
+    auto clientIP   = info[0].ToString();
+    auto clientPort = info[1].ToNumber();
+    auto serverIP   = info[2].ToString();
+    auto serverPort = info[3].ToNumber();
 
     if (true == this->m_transaction->processConnection(clientIP.Utf8Value().c_str(), clientPort.Int32Value(), serverIP.Utf8Value().c_str(), serverPort.Int32Value())) {
         modsecurity::ModSecurityIntervention it;
@@ -113,11 +113,11 @@ Napi::Value Transaction::processConnection(const Napi::CallbackInfo& info)
 
 Napi::Value Transaction::processURI(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-    Napi::String uri = info[0].ToString();
-    Napi::String method = info[1].ToString();
-    Napi::String protocolVersion = info[2].ToString();
-    if (true == this->m_transaction->processURI(uri.Utf8Value().c_str(), method.Utf8Value().c_str(), protocolVersion.Utf8Value().c_str())) {
+    auto env      = info.Env();
+    auto uri      = info[0].ToString();
+    auto method   = info[1].ToString();
+    auto protoVer = info[2].ToString();
+    if (true == this->m_transaction->processURI(uri.Utf8Value().c_str(), method.Utf8Value().c_str(), protoVer.Utf8Value().c_str())) {
         modsecurity::ModSecurityIntervention it;
         if (has_intervention(this->m_transaction, it)) {
             return make_intervention(env, it);
@@ -131,7 +131,7 @@ Napi::Value Transaction::processURI(const Napi::CallbackInfo& info)
 
 Napi::Value Transaction::addRequestHeader(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
+    auto env = info.Env();
 
     if (info.Length() >= 2) {
         std::string n;
@@ -288,12 +288,11 @@ Napi::Value Transaction::addResponseHeader(const Napi::CallbackInfo& info)
 
 Napi::Value Transaction::processResponseHeaders(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
+    auto env      = info.Env();
+    auto code     = info[0].ToNumber();
+    auto protoVer = info[1].ToString();
 
-    Napi::Number code = info[0].ToNumber();
-    Napi::String protocolVersion = info[1].ToString();
-
-    if (true == this->m_transaction->processResponseHeaders(code.Int32Value(), protocolVersion.Utf8Value().c_str())) {
+    if (true == this->m_transaction->processResponseHeaders(code.Int32Value(), protoVer.Utf8Value().c_str())) {
         modsecurity::ModSecurityIntervention it;
         if (has_intervention(this->m_transaction, it)) {
             return make_intervention(env, it);
@@ -307,16 +306,15 @@ Napi::Value Transaction::processResponseHeaders(const Napi::CallbackInfo& info)
 
 Napi::Value Transaction::updateStatusCode(const Napi::CallbackInfo& info)
 {
-    Napi::Env env     = info.Env();
-    Napi::Number code = info[0].ToNumber();
+    auto env  = info.Env();
+    auto code = info[0].ToNumber();
     return Napi::Boolean::New(env, this->m_transaction->updateStatusCode(code.Int32Value()));
 }
 
 Napi::Value Transaction::appendResponseBody(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
-
-    Napi::Value body = info[0];
+    auto env  = info.Env();
+    auto body = info[0];
     int res;
     if (body.IsBuffer()) {
         auto buf = body.As<Napi::Buffer<char>>();
@@ -342,7 +340,7 @@ Napi::Value Transaction::appendResponseBody(const Napi::CallbackInfo& info)
 
 Napi::Value Transaction::processResponseBody(const Napi::CallbackInfo& info)
 {
-    Napi::Env env = info.Env();
+    auto env = info.Env();
 
     if (true == this->m_transaction->processResponseBody()) {
         modsecurity::ModSecurityIntervention it;
