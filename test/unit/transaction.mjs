@@ -35,7 +35,7 @@ function checkIntervention(intervention, status, url, log, disruptive) {
  * @param {Transaction} tx
  * @returns {void}
  * @see https://github.com/SpiderLabs/ModSecurity/issues/2872
- * @see https://github.com/SpiderLabs/ModSecurity/issues/2886
+ * @see https://github.com/SpiderLabs/ModSecurity/pull/2886
  */
 function runInitialChecks(tx) {
     // libmodsecurity 3.0.6-3.0.8 are buggy. It segfaults if you don't call processConnection()

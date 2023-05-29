@@ -117,11 +117,16 @@ function modSecLogging(_request, response, next) {
 
 /**
  * @param {Error} error
- * @param {express.Request} request
+ * @param {express.Request} _request
  * @param {express.Response} response
  * @param {express.NextFunction} next
  */
-function errorHandler(error, request, response, next) {
+function errorHandler(error, _request, response, next) {
+    const tx = response.locals.tx;
+    if (tx instanceof Transaction) {
+        tx.processLogging();
+    }
+
     if (response.headersSent) {
         return next(error);
     }
