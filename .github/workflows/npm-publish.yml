@@ -1,0 +1,52 @@
+name: Publish Package
+
+on:
+  release:
+    types:
+      - released
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    environment: NPM
+    permissions:
+      contents: read
+      statuses: write
+    steps:
+      - name: Set commit status to PENDING
+        uses: myrotvorets/set-commit-status-action@243b4f7e597f62335408d58001edf8a02cf3e1fd # v1.1.7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+          context: Publish to NPM
+          sha: ${{ github.sha }}
+
+      - name: Checkout source
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Set up Node.js environment
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0
+        with:
+          node-version: lts/*
+          cache: npm
+          registry-url: https://registry.npmjs.org/
+
+      - name: Publish package
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Set final commit status
+        uses: myrotvorets/set-commit-status-action@243b4f7e597f62335408d58001edf8a02cf3e1fd # v1.1.7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          context: Publish to NPM
+          sha: ${{ github.sha }}

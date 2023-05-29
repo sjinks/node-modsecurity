@@ -45,8 +45,6 @@ As of the time of writing, libmodsecurity 3.0.9 seems to be OK: my tests did not
 
 ## Installation
 
-(TBD; the library has not been published to NPM yet)
-
 ```sh
 npm install modsecurity
 ```
