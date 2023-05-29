@@ -1,5 +1,9 @@
 # node-modsecurity
 
+[![CI](https://github.com/sjinks/node-modsecurity/actions/workflows/ci.yml/badge.svg)](https://github.com/sjinks/node-modsecurity/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sjinks_node-modsecurity&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sjinks_node-modsecurity)
+[![Dependency Review](https://github.com/sjinks/node-modsecurity/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/sjinks/node-modsecurity/actions/workflows/dependency-review.yml)
+
 A [ModSecurity](https://github.com/SpiderLabs/ModSecurity#readme) connector for Node.js
 
 ## Prerequisites
