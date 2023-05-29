@@ -21,7 +21,8 @@
     "build": "node-gyp rebuild",
     "build:dev": "node-gyp build --debug",
     "build:coverage": "CXXFLAGS='-Og --coverage -fprofile-abs-path' LDFLAGS='--coverage' npm run build",
-    "test": "node --expose-gc --test"
+    "test": "node --expose-gc --test",
+    "install": "node-gyp rebuild"
   },
   "keywords": [
     "modsecurity",
@@ -34,6 +35,10 @@
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^6.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.18.2",
+    "supertest": "^6.3.3"
   },
   "binary": {
     "napi_versions": [
@@ -59,8 +64,19 @@
     "src/transaction.cpp",
     "src/transaction.h"
   ],
-  "devDependencies": {
-    "express": "^4.18.2",
-    "supertest": "^6.3.3"
+  "gypfile": true,
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sjinks/node-modsecurity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sjinks/node-modsecurity/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://www.paypal.com/donate/?hosted_button_id=SAG6877JDJ3KU"
   }
 }
