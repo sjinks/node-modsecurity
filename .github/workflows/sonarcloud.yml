@@ -41,7 +41,7 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Install SonarCloud Scan for C and C++
-        uses: SonarSource/sonarcloud-github-c-cpp@4648377f00394506f6bd05c45869b646f6352719 # v2.0.1
+        uses: SonarSource/sonarcloud-github-c-cpp@e4882e1621ad2fb48dddfa48287411bed34789b1 # v2.0.2
 
       - name: Run build-wrapper
         run: |
