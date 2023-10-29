@@ -78,5 +78,9 @@
   "funding": {
     "type": "individual",
     "url": "https://www.paypal.com/donate/?hosted_button_id=SAG6877JDJ3KU"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
