@@ -1,6 +1,6 @@
 {
   "name": "modsecurity",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ModSecurity connector for Node.js",
   "main": "index.cjs",
   "module": "index.mjs",
