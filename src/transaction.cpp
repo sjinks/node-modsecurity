@@ -146,7 +146,7 @@ Napi::Value Transaction::addRequestHeader(const Napi::CallbackInfo& info)
             auto buf = info[1].As<Napi::Buffer<char>>();
             value    = string_view(buf.Data(), buf.Length());
         } else {
-            v     = info[0].ToString().Utf8Value();
+            v     = info[1].ToString().Utf8Value();
             value = string_view(v);
         }
 
@@ -265,7 +265,7 @@ Napi::Value Transaction::addResponseHeader(const Napi::CallbackInfo& info)
             auto buf = info[1].As<Napi::Buffer<char>>();
             value    = string_view(buf.Data(), buf.Length());
         } else {
-            v     = info[0].ToString().Utf8Value();
+            v     = info[1].ToString().Utf8Value();
             value = string_view(v);
         }
 
