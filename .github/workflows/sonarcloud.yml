@@ -42,7 +42,7 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Install Build Wrapper
-        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@ba9859eae8dd6bd29e412f25ddbbef3d032000f4 # v8
 
       - name: Run build-wrapper
         run: |
@@ -61,7 +61,7 @@ jobs:
           find .. -name '*.o' | xargs gcov --preserve-paths
 
       - name: Run sonar-scanner
-        uses: SonarSource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432 # v8
+        uses: SonarSource/sonarqube-scan-action@ba9859eae8dd6bd29e412f25ddbbef3d032000f4 # v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
