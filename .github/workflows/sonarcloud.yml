@@ -48,7 +48,7 @@ jobs:
         run: |
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} npm run build
         env:
-          CXXFLAGS: -Og --coverage -fprofile-abs-path -std=c++14
+          CXXFLAGS: -Og --coverage -fprofile-abs-path -std=c++17
           LDFLAGS: --coverage
 
       - name: Run tests
